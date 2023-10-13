@@ -1,11 +1,10 @@
 
 import { useAuth } from "@clerk/clerk-expo";
-import { Image } from "expo-image";
+import Ionicons from '@expo/vector-icons/Ionicons';
 import { Tabs, useRouter } from 'expo-router';
 import React, { useEffect } from 'react';
-import { View, Text, Platform } from 'react-native';
+import { Platform, Text, View } from 'react-native';
 import { COLORS } from '~/constants/colors';
-import Ionicons from '@expo/vector-icons/Ionicons';
 
 const InitialLayout = () => {
   const { isLoaded, isSignedIn } = useAuth();
@@ -48,8 +47,7 @@ const InitialLayout = () => {
               }}>
                 <Ionicons
                   name="home"
-                  size={32}
-                  color="green"
+                  size={24}
                   style={{
                     height: 24,
                     width: 24,
@@ -79,9 +77,8 @@ const InitialLayout = () => {
                 borderTopWidth: 2
               }}>
                 <Ionicons
-                  name="home"
-                  size={32}
-                  color="green"
+                  name="book"
+                  size={24}
                   style={{
                     height: 24,
                     width: 24,
@@ -92,7 +89,7 @@ const InitialLayout = () => {
                 <Text style={{
                   fontSize: 14,
                   color: focused ? COLORS.primary : COLORS.black
-                }}>Cards</Text>
+                }}>Class</Text>
               </View>
             )
           }
@@ -109,22 +106,21 @@ const InitialLayout = () => {
                 alignItems: "center",
                 justifyContent: "center",
                 backgroundColor: COLORS.primary,
-                width: Platform.OS == "ios" ? 50 : 60,
-                height: Platform.OS == "ios" ? 50 : 60,
+                width: Platform.OS == "ios" ? 55 : 65,
+                height: Platform.OS == "ios" ? 55 : 65,
                 top: Platform.OS == "ios" ? -10 : -20,
-                borderRadius: Platform.OS == "ios" ? 25 : 30,
+                borderRadius: Platform.OS == "ios" ? 30 : 35,
               }}>
                 <Ionicons
-                  name="home"
-                  size={32}
+                  name="rocket-outline"
+                  size={33}
                   color="green"
                   style={{
-                    height: 24,
-                    width: 24,
-                    color: focused ? COLORS.primary : COLORS.black
+                    height: 33,
+                    width: 33,
+                    color: focused ? COLORS.white : COLORS.black
                   }}
                 />
-
               </View>
             )
           }
@@ -144,8 +140,8 @@ const InitialLayout = () => {
                 borderTopWidth: 2
               }}>
                 <Ionicons
-                  name="home"
-                  size={32}
+                  name="document"
+                  size={24}
                   color="green"
                   style={{
                     height: 24,
@@ -157,7 +153,7 @@ const InitialLayout = () => {
                 <Text style={{
                   fontSize: 14,
                   color: focused ? COLORS.primary : COLORS.black
-                }}>Loans</Text>
+                }}>Task</Text>
               </View>
             )
           }
@@ -177,9 +173,8 @@ const InitialLayout = () => {
                 borderTopWidth: 2
               }}>
                 <Ionicons
-                  name="home"
-                  size={32}
-                  color="green"
+                  name="person-circle"
+                  size={24}
                   style={{
                     height: 24,
                     width: 24,
@@ -190,7 +185,7 @@ const InitialLayout = () => {
                 <Text style={{
                   fontSize: 14,
                   color: focused ? COLORS.primary : COLORS.black
-                }}>Settings</Text>
+                }}>Profile</Text>
               </View>
             )
           }
