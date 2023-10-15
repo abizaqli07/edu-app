@@ -1,9 +1,10 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { useOAuth, useSignIn } from "@clerk/clerk-expo";
 import { Image } from "expo-image";
 import { Link } from "expo-router";
 import * as WebBrowser from "expo-web-browser";
 import React from "react";
-import { Button, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { Text, TextInput, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { COLORS } from "~/constants/colors";
 import { useWarmUpBrowser } from "~/hooks/use_warm_up_browser";
@@ -32,14 +33,14 @@ export default function SignInScreen() {
       await setActive({ session: completeSignIn.createdSessionId });
 
 
-    } catch (err: any) {
+    } catch (err) {
       console.log("Something error", err);
     }
   };
 
   const onOAuthPress = React.useCallback(async () => {
     try {
-      const { createdSessionId, signIn, signUp, setActive } =
+      const { createdSessionId, setActive } =
         await startOAuthFlow();
 
       if (createdSessionId) {

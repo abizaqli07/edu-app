@@ -3,11 +3,10 @@ import { relations, sql } from "drizzle-orm";
 import {
   index,
   integer,
-  pgTable,
   primaryKey,
   text,
   timestamp,
-  varchar,
+  varchar
 } from "drizzle-orm/pg-core";
 
 import { myPgTable } from "./_table";
