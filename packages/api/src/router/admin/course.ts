@@ -1,23 +1,7 @@
-import { z } from "zod";
-import { createTRPCRouter, publicProcedure } from "../../trpc";
 import { eq, schema } from "@acme/db";
 import { TRPCError } from "@trpc/server";
-
-const createCourse = z.object({
-  title: z.string().min(1)
-})
-
-const updateCourse = z.object({
-  id: z.string().uuid(),
-  title: z.string().min(1),
-  description: z.string(),
-  imageUrl: z.string().url(),
-  categoryId: z.string().uuid(),
-})
-
-const idCourse = z.object({
-  id: z.string().uuid()
-})
+import { createCourse, idCourse, updateCourse } from "../../inputSchema";
+import { createTRPCRouter, publicProcedure } from "../../trpc";
 
 export const courseRouter = createTRPCRouter({
   create: publicProcedure
@@ -41,7 +25,12 @@ export const courseRouter = createTRPCRouter({
       }
 
       const course = await ctx.db.update(schema.course)
-        .set(input)
+        .set({
+          title: input.title,
+          description: input.description,
+          imageUrl: input.imageUrl,
+          categoryId: input.categoryId,
+        })
         .where(eq(schema.course.id, input.id))
         .returning()
 

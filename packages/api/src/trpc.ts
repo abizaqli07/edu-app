@@ -13,6 +13,7 @@ import { ZodError } from "zod";
 import { auth } from "@acme/auth";
 import type { Session } from "@acme/auth";
 import { db } from "@acme/db";
+import { Video } from "@acme/db"
 
 /**
  * 1. CONTEXT
@@ -40,6 +41,7 @@ const createInnerTRPCContext = (opts: CreateContextOptions) => {
   return {
     session: opts.session,
     db,
+    Video
   };
 };
 

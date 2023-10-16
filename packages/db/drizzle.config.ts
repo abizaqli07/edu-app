@@ -9,6 +9,10 @@ if (!process.env.DATABASE_URL) {
   throw new Error("DATABASE_URL is not set");
 }
 
+if (!process.env.MUX_TOKEN_ID || !process.env.MUX_TOKEN_SECRET) {
+  throw new Error("MUX Token is not set");
+}
+
 export default {
   schema: "./schema",
   driver: "pg",
