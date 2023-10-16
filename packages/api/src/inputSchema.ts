@@ -46,3 +46,18 @@ export const reorderChapter = z.object({
     position: z.number()
   }))
 })
+
+export const createAttachment = z.object({
+  courseId: z.string().uuid(),
+  url: z.string().url()
+})
+
+export const deleteAttachment = z.object({
+  courseId: z.string().uuid(),
+  id: z.string().uuid()
+})
+
+export const joinClass = z.object({
+  courseId: z.string().uuid(),
+  userId: z.string()
+})
