@@ -1,7 +1,9 @@
 import { z } from "zod"
 
 export const createCourse = z.object({
-  title: z.string().min(1)
+  title: z.string().min(1, {
+    message: "Title required"
+  })
 })
 
 export const updateCourse = z.object({

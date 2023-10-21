@@ -1,4 +1,4 @@
-import { eq, schema } from "@acme/db";
+import { asc, desc, eq, schema } from "@acme/db";
 import { TRPCError } from "@trpc/server";
 import { createCourse, idCourse, updateCourse } from "../../inputSchema";
 import { createTRPCRouter, publicProcedure } from "../../trpc";
@@ -7,7 +7,8 @@ export const courseRouter = createTRPCRouter({
   create: publicProcedure
     .input(createCourse)
     .mutation(async ({ ctx, input }) => {
-      return await ctx.db.insert(schema.course).values(input);
+      const course = await ctx.db.insert(schema.course).values(input).returning();
+      return course
     }),
   update: publicProcedure
     .input(updateCourse)
@@ -99,6 +100,30 @@ export const courseRouter = createTRPCRouter({
       const course = await ctx.db.delete(schema.course)
         .where(eq(schema.course.id, input.id))
         .returning()
+
+      return course
+    }),
+  getOne: publicProcedure
+    .input(idCourse)
+    .query(async ({ ctx, input }) => {
+      const course = await ctx.db.query.course.findFirst({
+        where: ((course, { eq }) => eq(course.id, input.id)),
+        with: {
+          chapters: {
+            orderBy: [asc(schema.chapter.id)]
+          },
+          attachments: {
+            orderBy: [desc(schema.attachment.createdAt)]
+          }
+        }
+      }).execute()
+
+      if (!course) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Course Not Found"
+        })
+      }
 
       return course
     })
