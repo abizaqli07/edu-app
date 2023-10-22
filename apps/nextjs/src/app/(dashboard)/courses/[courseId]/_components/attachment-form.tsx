@@ -1,11 +1,10 @@
 "use client";
 
-import axios from "axios";
 import { File, Loader2, PlusCircle, X } from "lucide-react";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import * as z from "zod";
+import { api } from "~/utils/api";
 import type { RouterOutputs } from "~/utils/api";
 
 import { FileUpload } from "~/components/file-upload";
@@ -29,30 +28,43 @@ export const AttachmentForm = ({
 
   const toggleEdit = () => setIsEditing((current) => !current);
 
-  const router = useRouter();
+  const context = api.useContext();
 
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    try {
-      await axios.post(`/api/courses/${courseId}/attachments`, values);
-      toast.success("Course updated");
+  const attach = api.admin.attachment.create.useMutation({
+    async onSuccess() {
+      toast.success("Course updated")
       toggleEdit();
-      router.refresh();
-    } catch {
-      toast.error("Something went wrong");
-    }
+      await context.admin.attachment.invalidate()
+    },
+    onError(error) {
+      toast.error(error.message)
+    },
+  })
+
+  const deleteAttach = api.admin.attachment.delete.useMutation({
+    async onSuccess() {
+      toast.success("Attachment deleeted")
+      await context.admin.attachment.invalidate()
+      setDeletingId(null);
+    },
+    onError(error) {
+      toast.error(error.message)
+      setDeletingId(null);
+    },
+  })
+
+  const onSubmit = (values: z.infer<typeof formSchema>) => {
+    attach.mutate({
+      ...values,
+      courseId: courseId
+    })
   };
 
-  const onDelete = async (id: string) => {
-    try {
-      setDeletingId(id);
-      await axios.delete(`/api/courses/${courseId}/attachments/${id}`);
-      toast.success("Attachment deleted");
-      router.refresh();
-    } catch {
-      toast.error("Something went wrong");
-    } finally {
-      setDeletingId(null);
-    }
+  const onDelete = (id: string) => {
+    deleteAttach.mutate({
+      id: id,
+      courseId: courseId
+    })
   }
 
   return (

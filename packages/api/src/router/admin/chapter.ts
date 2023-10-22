@@ -30,7 +30,7 @@ export const chapterRouter = createTRPCRouter({
 
       const chapter = await ctx.db.update(schema.chapter)
         .set({
-          title: input.title,
+          title: input.title ?? undefined,
           description: input.description,
           videoUrl: input.videoUrl
         })
@@ -194,5 +194,24 @@ export const chapterRouter = createTRPCRouter({
       }
 
       return deletedChapter
+    }),
+  getOne: publicProcedure
+    .input(idChapter)
+    .query(async ({ ctx, input }) => {
+      const chapter = await ctx.db.query.chapter.findFirst({
+        where: ((chapter, { eq }) => eq(chapter.id, input.id) && eq(chapter.courseId, input.courseId)),
+        with: {
+          muxData: true
+        }
+      })
+
+      if (!chapter) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Course Not Found"
+        })
+      }
+
+      return chapter
     })
 });

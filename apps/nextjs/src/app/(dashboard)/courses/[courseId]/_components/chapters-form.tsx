@@ -1,15 +1,14 @@
 "use client";
 
-import * as z from "zod";
-import axios from "axios";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
 import { Loader2, PlusCircle } from "lucide-react";
-import { useState } from "react";
-import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
-import type { Chapter, Course } from "@prisma/client";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import toast from "react-hot-toast";
+import * as z from "zod";
 
+import { Button } from "~/components/ui/button";
 import {
   Form,
   FormControl,
@@ -17,14 +16,15 @@ import {
   FormItem,
   FormMessage,
 } from "~/components/ui/form";
-import { Button } from "~/components/ui/button";
+import { Input } from "~/components/ui/input";
 import { cn } from "~/lib/utils";
-import { Input } from "@~components/ui/input";
 
+import type { RouterOutputs } from "@acme/api";
+import { api } from "~/utils/api";
 import { ChaptersList } from "./chapters-list";
 
 interface ChaptersFormProps {
-  initialData: Course & { chapters: Chapter[] };
+  initialData: RouterOutputs["admin"]["course"]["getOne"];
   courseId: string;
 };
 
@@ -43,6 +43,31 @@ export const ChaptersForm = ({
     setIsCreating((current) => !current);
   }
 
+  const context = api.useContext()
+
+  const chapter = api.admin.chapter.create.useMutation({
+    async onSuccess() {
+      toast.success("Chapter created")
+      toggleCreating();
+      await context.admin.chapter.invalidate()
+    },
+    onError(error) {
+      toast.error(error.message)
+    },
+  })
+
+  const reorder = api.admin.chapter.reorder.useMutation({
+    async onSuccess() {
+      toast.success("Chapter Reordered")
+      await context.admin.chapter.invalidate()
+      setIsUpdating(false);
+    },
+    onError(error) {
+      toast.error(error.message)
+      setIsUpdating(false);
+    }
+  })
+
   const router = useRouter();
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -54,31 +79,21 @@ export const ChaptersForm = ({
 
   const { isSubmitting, isValid } = form.formState;
 
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    try {
-      await axios.post(`/api/courses/${courseId}/chapters`, values);
-      toast.success("Chapter created");
-      toggleCreating();
-      router.refresh();
-    } catch {
-      toast.error("Something went wrong");
-    }
+  const onSubmit = (values: z.infer<typeof formSchema>) => {
+    chapter.mutate({
+      ...values,
+      courseId: courseId
+    })
   }
 
-  const onReorder = async (updateData: { id: string; position: number }[]) => {
-    try {
-      setIsUpdating(true);
+  const onReorder = (updateData: { id: string; position: number }[]) => {
+    setIsUpdating(true);
 
-      await axios.put(`/api/courses/${courseId}/chapters/reorder`, {
-        list: updateData
-      });
-      toast.success("Chapters reordered");
-      router.refresh();
-    } catch {
-      toast.error("Something went wrong");
-    } finally {
-      setIsUpdating(false);
-    }
+    reorder.mutate({
+      courseId: courseId,
+      list: updateData
+    })
+
   }
 
   const onEdit = (id: string) => {

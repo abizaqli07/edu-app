@@ -27,7 +27,7 @@ export const courseRouter = createTRPCRouter({
 
       const course = await ctx.db.update(schema.course)
         .set({
-          title: input.title,
+          title: input.title ?? undefined,
           description: input.description,
           imageUrl: input.imageUrl,
           categoryId: input.categoryId,

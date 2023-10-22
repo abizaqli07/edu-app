@@ -7,7 +7,6 @@ import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import * as z from "zod";
 
-import type { RouterOutputs } from "@acme/api";
 import { Button } from "~/components/ui/button";
 import {
   Form,
@@ -16,34 +15,37 @@ import {
   FormItem,
   FormMessage,
 } from "~/components/ui/form";
-import { Textarea } from "~/components/ui/textarea";
-import { cn } from "~/lib/utils";
+import { Input } from "~/components/ui/input";
 import { api } from "~/utils/api";
 
-interface DescriptionFormProps {
-  initialData: RouterOutputs["admin"]["course"]["getOne"];
+interface ChapterTitleFormProps {
+  initialData: {
+    title: string;
+  };
   courseId: string;
+  chapterId: string;
 };
 
 const formSchema = z.object({
-  description: z.string().min(1),
+  title: z.string().min(1),
 });
 
-export const DescriptionForm = ({
+export const ChapterTitleForm = ({
   initialData,
-  courseId
-}: DescriptionFormProps) => {
+  courseId,
+  chapterId,
+}: ChapterTitleFormProps) => {
   const [isEditing, setIsEditing] = useState(false);
 
   const toggleEdit = () => setIsEditing((current) => !current);
 
   const context = api.useContext();
 
-  const course = api.admin.course.update.useMutation({
+  const chapter = api.admin.chapter.update.useMutation({
     async onSuccess() {
-      toast.success("Course updated")
+      toast.success("Chapter updated")
       toggleEdit();
-      await context.admin.course.invalidate()
+      await context.admin.chapter.invalidate()
     },
     onError(error) {
       toast.error(error.message)
@@ -52,41 +54,36 @@ export const DescriptionForm = ({
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      description: initialData?.description ?? ""
-    },
+    defaultValues: initialData,
   });
 
   const { isSubmitting, isValid } = form.formState;
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
-    course.mutate({
+    chapter.mutate({
       ...values,
-      id: courseId
+      id: chapterId
     })
   }
 
   return (
     <div className="mt-6 border bg-slate-100 rounded-md p-4">
       <div className="font-medium flex items-center justify-between">
-        Course description
+        Chapter title
         <Button onClick={toggleEdit} variant="ghost">
           {isEditing ? (
             <>Cancel</>
           ) : (
             <>
               <Pencil className="h-4 w-4 mr-2" />
-              Edit description
+              Edit title
             </>
           )}
         </Button>
       </div>
       {!isEditing && (
-        <p className={cn(
-          "text-sm mt-2",
-          !initialData.description && "text-slate-500 italic"
-        )}>
-          {initialData.description ?? "No description"}
+        <p className="text-sm mt-2">
+          {initialData.title}
         </p>
       )}
       {isEditing && (
@@ -97,13 +94,13 @@ export const DescriptionForm = ({
           >
             <FormField
               control={form.control}
-              name="description"
+              name="title"
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
-                    <Textarea
+                    <Input
                       disabled={isSubmitting}
-                      placeholder="e.g. 'This course is about...'"
+                      placeholder="e.g. 'Introduction to the course'"
                       {...field}
                     />
                   </FormControl>

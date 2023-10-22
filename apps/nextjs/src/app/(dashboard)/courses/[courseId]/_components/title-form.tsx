@@ -2,13 +2,11 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Pencil } from "lucide-react";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
-import type * as z from "zod";
+import * as z from "zod";
 
-import { updateCourse } from "@acme/api/src/inputSchema";
 import { Button } from "~/components/ui/button";
 import {
   Form,
@@ -27,6 +25,10 @@ interface TitleFormProps {
   courseId: string;
 };
 
+const formSchema = z.object({
+  title: z.string().min(1),
+});
+
 export const TitleForm = ({
   initialData,
   courseId
@@ -39,7 +41,7 @@ export const TitleForm = ({
 
   const course = api.admin.course.update.useMutation({
     async onSuccess() {
-      toast.success("Course created")
+      toast.success("Course updated")
       toggleEdit();
       await context.admin.course.invalidate()
     },
@@ -48,14 +50,14 @@ export const TitleForm = ({
     },
   })
 
-  const form = useForm<z.infer<typeof updateCourse>>({
-    resolver: zodResolver(updateCourse),
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
     defaultValues: initialData,
   });
 
   const { isSubmitting, isValid } = form.formState;
 
-  const onSubmit = (values: z.infer<typeof updateCourse>) => {
+  const onSubmit = (values: z.infer<typeof formSchema>) => {
     course.mutate({
       ...values,
       id: courseId

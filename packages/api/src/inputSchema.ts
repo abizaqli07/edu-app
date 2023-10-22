@@ -8,10 +8,10 @@ export const createCourse = z.object({
 
 export const updateCourse = z.object({
   id: z.string().uuid(),
-  title: z.string().min(1),
-  description: z.string(),
-  imageUrl: z.string().url(),
-  categoryId: z.string().uuid(),
+  title: z.string().min(1).nullish(),
+  description: z.string().nullish(),
+  imageUrl: z.string().url().nullish(),
+  categoryId: z.string().uuid().nullish(),
 })
 
 export const idCourse = z.object({
@@ -25,9 +25,9 @@ export const createChapter = z.object({
 
 export const updateChapter = z.object({
   id: z.string().uuid(),
-  title: z.string(),
-  description: z.string(),
-  videoUrl: z.string().url().nullable()
+  title: z.string().nullish(),
+  description: z.string().nullish(),
+  videoUrl: z.string().url().nullish()
 })
 
 export const idChapter = z.object({

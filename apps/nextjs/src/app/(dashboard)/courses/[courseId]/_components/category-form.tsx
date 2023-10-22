@@ -1,14 +1,15 @@
 "use client";
 
-import * as z from "zod";
-import axios from "axios";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
 import { Pencil } from "lucide-react";
 import { useState } from "react";
+import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
-import { useRouter } from "next/navigation";
+import * as z from "zod";
 
+import type { RouterOutputs } from "@acme/api";
+import { Button } from "~/components/ui/button";
+import { Combobox } from "~/components/ui/combobox";
 import {
   Form,
   FormControl,
@@ -16,11 +17,8 @@ import {
   FormItem,
   FormMessage,
 } from "~/components/ui/form";
-import { Button } from "~/components/ui/button";
 import { cn } from "~/lib/utils";
-import { Textarea } from "~/components/ui/textarea";
-import { Combobox } from "~/components/ui/combobox";
-import type { RouterOutputs } from "@acme/api";
+import { api } from "~/utils/api";
 
 interface CategoryFormProps {
   initialData: RouterOutputs["admin"]["course"]["getOne"];
@@ -41,26 +39,33 @@ export const CategoryForm = ({
 
   const toggleEdit = () => setIsEditing((current) => !current);
 
-  const router = useRouter();
+  const context = api.useContext();
+
+  const course = api.admin.course.update.useMutation({
+    async onSuccess() {
+      toast.success("Course updated")
+      toggleEdit();
+      await context.admin.course.invalidate()
+    },
+    onError(error) {
+      toast.error(error.message)
+    },
+  })
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      categoryId: initialData?.categoryId || ""
+      categoryId: initialData?.categoryId ?? ""
     },
   });
 
   const { isSubmitting, isValid } = form.formState;
 
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    try {
-      await axios.patch(`/api/courses/${courseId}`, values);
-      toast.success("Course updated");
-      toggleEdit();
-      router.refresh();
-    } catch {
-      toast.error("Something went wrong");
-    }
+  const onSubmit = (values: z.infer<typeof formSchema>) => {
+    course.mutate({
+      ...values,
+      id: courseId
+    })
   }
 
   const selectedOption = options.find((option) => option.value === initialData.categoryId);
@@ -85,7 +90,7 @@ export const CategoryForm = ({
           "text-sm mt-2",
           !initialData.categoryId && "text-slate-500 italic"
         )}>
-          {selectedOption?.label || "No category"}
+          {selectedOption?.label ?? "No category"}
         </p>
       )}
       {isEditing && (
