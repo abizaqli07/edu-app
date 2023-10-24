@@ -55,7 +55,7 @@ export const courseRouter = createTRPCRouter({
         .set({
           isPublished: false
         })
-        .where(eq(schema.course, input.id))
+        .where(eq(schema.course.id, input.id))
         .returning()
 
       return course
@@ -78,7 +78,7 @@ export const courseRouter = createTRPCRouter({
         .set({
           isPublished: true
         })
-        .where(eq(schema.course, input.id))
+        .where(eq(schema.course.id, input.id))
         .returning()
 
       return course

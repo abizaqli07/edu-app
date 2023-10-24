@@ -1,14 +1,13 @@
 "use client";
 
-import axios from "axios";
 import { Trash } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import toast from "react-hot-toast";
-import { useRouter } from "next/navigation";
 
-import { Button } from "~/components/ui/button";
 import { ConfirmModal } from "~/components/modals/confirm-modal";
-import { useConfettiStore } from "~/hooks/use-confetti-store";
+import { Button } from "~/components/ui/button";
+import { api } from "~/utils/api";
 
 interface ActionsProps {
   disabled: boolean;
@@ -22,44 +21,67 @@ export const Actions = ({
   isPublished
 }: ActionsProps) => {
   const router = useRouter();
-  const confetti = useConfettiStore();
   const [isLoading, setIsLoading] = useState(false);
 
-  const onClick = async () => {
-    try {
-      setIsLoading(true);
+  const context = api.useContext()
 
-      if (isPublished) {
-        await axios.patch(`/api/courses/${courseId}/unpublish`);
-        toast.success("Course unpublished");
-      } else {
-        await axios.patch(`/api/courses/${courseId}/publish`);
-        toast.success("Course published");
-        confetti.onOpen();
-      }
+  const pub = api.admin.course.publish.useMutation({
+    onSuccess() {
+      toast.success("Course published");
+      setIsLoading(false)
+    },
+    onError(error) {
+      toast.error(error.message)
+      setIsLoading(false)
+    }
+  })
 
-      router.refresh();
-    } catch {
-      toast.error("Something went wrong");
-    } finally {
+  const unPub = api.admin.course.unpublish.useMutation({
+    onSuccess() {
+      toast.success("Course unpublished");
+      setIsLoading(false)
+    },
+    onError(error) {
+      toast.error(error.message)
+      setIsLoading(false)
+    }
+  })
+
+  const deleteCourse = api.admin.course.delete.useMutation({
+    async onSuccess() {
+      toast.success("Course deleted");
+      await context.admin.course.invalidate()
+      setIsLoading(false);
+      router.push("/course")
+    },
+    onError(error) {
+      toast.error(error.message)
       setIsLoading(false);
     }
+  })
+
+  const onClick = async () => {
+    setIsLoading(true);
+
+    if (isPublished) {
+      unPub.mutate({
+        id: courseId
+      })
+    } else {
+      pub.mutate({
+        id: courseId
+      })
+    }
+
+    await context.admin.chapter.invalidate()
   }
 
-  const onDelete = async () => {
-    try {
-      setIsLoading(true);
+  const onDelete = () => {
+    setIsLoading(true);
 
-      await axios.delete(`/api/courses/${courseId}`);
-
-      toast.success("Course deleted");
-      router.refresh();
-      router.push(`/teacher/courses`);
-    } catch {
-      toast.error("Something went wrong");
-    } finally {
-      setIsLoading(false);
-    }
+    deleteCourse.mutate({
+      id: courseId
+    })
   }
 
   return (

@@ -1,4 +1,4 @@
-import { auth } from "@clerk/nextjs";
+"use client"
 import { File, LayoutDashboard, ListChecks } from "lucide-react";
 import { redirect } from "next/navigation";
 
@@ -19,17 +19,18 @@ const CourseIdPage = ({
 }: {
   params: { courseId: string }
 }) => {
-  const { userId } = auth();
 
-  if (!userId) {
-    return redirect("/");
-  }
-
-  const { data: course } = api.admin.course.getOne.useQuery({
+  const { data: course, isLoading } = api.admin.course.getOne.useQuery({
     id: params.courseId
   })
 
-  const { data: categories } = api.category.getAll.useQuery()
+  const { data: categories, isLoading: CategoryLoading } = api.category.getAll.useQuery()
+
+  if (isLoading || CategoryLoading || !course) {
+    return (
+      <div>loading..</div>
+    )
+  }
 
   if (!course) {
     return redirect("/");
@@ -49,6 +50,16 @@ const CourseIdPage = ({
   const completionText = `(${completedFields}/${totalFields})`;
 
   const isComplete = requiredFields.every(Boolean);
+
+  if (isLoading || CategoryLoading || !course) {
+    return (
+      <div>loading..</div>
+    )
+  }
+
+  if (!course) {
+    return redirect("/");
+  }
 
   return (
     <>

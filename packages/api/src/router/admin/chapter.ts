@@ -203,14 +203,7 @@ export const chapterRouter = createTRPCRouter({
         with: {
           muxData: true
         }
-      })
-
-      if (!chapter) {
-        throw new TRPCError({
-          code: "NOT_FOUND",
-          message: "Course Not Found"
-        })
-      }
+      }).execute()
 
       return chapter
     })

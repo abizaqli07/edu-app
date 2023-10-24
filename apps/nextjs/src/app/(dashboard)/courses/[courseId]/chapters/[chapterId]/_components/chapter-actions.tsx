@@ -63,12 +63,12 @@ export const ChapterActions = ({
     setIsLoading(true);
 
     if (isPublished) {
-      pub.mutate({
+      unPub.mutate({
         id: chapterId,
         courseId: courseId
       })
     } else {
-      unPub.mutate({
+      pub.mutate({
         id: chapterId,
         courseId: courseId
       })

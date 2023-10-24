@@ -1,20 +1,30 @@
-"use client";
 
-import { Chapter } from "@prisma/client";
-import { useEffect, useState } from "react";
+import type {
+  DropResult
+} from "@hello-pangea/dnd";
 import {
   DragDropContext,
-  Droppable,
   Draggable,
-  DropResult,
+  Droppable
 } from "@hello-pangea/dnd";
 import { Grip, Pencil } from "lucide-react";
+import { useEffect, useState } from "react";
 
-import { cn } from "@/lib/utils";
-import { Badge } from "@/components/ui/badge";
+import { Badge } from "~/components/ui/badge";
+import { cn } from "~/lib/utils";
 
 interface ChaptersListProps {
-  items: Chapter[];
+  items: {
+    id: string;
+    description: string | null;
+    title: string;
+    createdAt: Date;
+    updatedAt: Date;
+    isPublished: boolean;
+    videoUrl: string | null;
+    position: number;
+    courseId: string;
+  }[];
   onReorder: (updateData: { id: string; position: number }[]) => void;
   onEdit: (id: string) => void;
 };
@@ -40,7 +50,7 @@ export const ChaptersList = ({
 
     const items = Array.from(chapters);
     const [reorderedItem] = items.splice(result.source.index, 1);
-    items.splice(result.destination.index, 0, reorderedItem);
+    items.splice(result.destination.index, 0, reorderedItem!);
 
     const startIndex = Math.min(result.source.index, result.destination.index);
     const endIndex = Math.max(result.source.index, result.destination.index);
@@ -67,9 +77,9 @@ export const ChaptersList = ({
         {(provided) => (
           <div {...provided.droppableProps} ref={provided.innerRef}>
             {chapters.map((chapter, index) => (
-              <Draggable 
-                key={chapter.id} 
-                draggableId={chapter.id} 
+              <Draggable
+                key={chapter.id}
+                draggableId={chapter.id}
                 index={index}
               >
                 {(provided) => (
@@ -94,11 +104,6 @@ export const ChaptersList = ({
                     </div>
                     {chapter.title}
                     <div className="ml-auto pr-2 flex items-center gap-x-2">
-                      {chapter.isFree && (
-                        <Badge>
-                          Free
-                        </Badge>
-                      )}
                       <Badge
                         className={cn(
                           "bg-slate-500",

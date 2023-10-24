@@ -1,4 +1,5 @@
-import { auth } from "@clerk/nextjs";
+"use client"
+
 import { ArrowLeft, LayoutDashboard, Video } from "lucide-react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
@@ -17,16 +18,17 @@ const ChapterIdPage = ({
 }: {
   params: { courseId: string; chapterId: string }
 }) => {
-  const { userId } = auth();
 
-  if (!userId) {
-    return redirect("/");
-  }
-
-  const { data: chapter } = api.admin.chapter.getOne.useQuery({
+  const { data: chapter, isLoading } = api.admin.chapter.getOne.useQuery({
     id: params.chapterId,
     courseId: params.courseId
   })
+
+  if (isLoading) {
+    return (
+      <div>Loading...</div>
+    )
+  }
 
   if (!chapter) {
     return redirect("/")
@@ -57,7 +59,7 @@ const ChapterIdPage = ({
         <div className="flex items-center justify-between">
           <div className="w-full">
             <Link
-              href={`/teacher/courses/${params.courseId}`}
+              href={`/courses/${params.courseId}`}
               className="flex items-center text-sm hover:opacity-75 transition mb-6"
             >
               <ArrowLeft className="h-4 w-4 mr-2" />
