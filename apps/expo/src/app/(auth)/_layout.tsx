@@ -1,6 +1,6 @@
-import React, { useEffect } from 'react';
+import { useAuth } from "@clerk/clerk-expo";
 import { Stack, useRouter } from 'expo-router';
-import { ClerkProvider, SignedIn, SignedOut, useAuth } from "@clerk/clerk-expo";
+import React, { useEffect } from 'react';
 
 const InitialLayout = () => {
   const { isLoaded, isSignedIn } = useAuth();
@@ -12,7 +12,7 @@ const InitialLayout = () => {
     console.log('User changed: ', isSignedIn);
 
     if (isSignedIn) {
-      router.replace('/course');
+      router.replace('/home');
     }
   }, [isSignedIn]);
 

@@ -43,10 +43,11 @@ const Profile = () => {
           />
         </TouchableOpacity>
       </View>
-      <View className=" justify-center items-center">
+
+      <View className=" justify-center items-center mb-12">
         <Image
           className="w-40 h-40 rounded-3xl mb-5"
-          source={user?.hasImage ? user.imageUrl : require("../../../assets/avatar.jpg")}
+          source={user?.hasImage ? { uri: user.imageUrl } : require("../../../assets/avatar.jpg")}
         />
         <Text className="text-lg font-bold">
           {(user?.firstName && user.lastName)
@@ -59,22 +60,7 @@ const Profile = () => {
         </Text>
       </View>
 
-      <View style={styles.middleSectionTextContainer}>
-        <View style={styles.middleSectionText}>
-          <Text style={styles.toptext}>Applied</Text>
-          <Text style={styles.bottomtext}>28</Text>
-        </View>
-        <View style={styles.middleSectionText}>
-          <Text style={styles.toptext}>Reviewed</Text>
-          <Text style={styles.bottomtext}>73</Text>
-        </View>
-        <View style={styles.middleSectionText}>
-          <Text style={styles.toptext}>Contacted</Text>
-          <Text style={styles.bottomtext}>18</Text>
-        </View>
-      </View>
-
-      <View>
+      <View className=" p-12">
         <TextInput placeholder="First Name" value={firstName} onChangeText={setFirstName} style={styles.inputField} />
         <TextInput placeholder="Last Name" value={lastName} onChangeText={setLastName} style={styles.inputField} />
         <Button onPress={onSaveUser} title="Update account" color={'#6c47ff'}></Button>

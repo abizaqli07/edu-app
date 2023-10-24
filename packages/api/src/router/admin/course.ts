@@ -126,5 +126,13 @@ export const courseRouter = createTRPCRouter({
       }
 
       return course
+    }),
+  getAll: publicProcedure
+    .query(async ({ ctx }) => {
+      const course = await ctx.db.query.course.findMany({
+        orderBy: [desc(schema.course.createdAt)]
+      })
+
+      return course
     })
 });

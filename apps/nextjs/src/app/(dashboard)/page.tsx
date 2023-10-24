@@ -1,16 +1,8 @@
-import Link from 'next/link'
-import React from 'react'
-import { Button } from '~/components/ui/button'
 
 const Dashboard = () => {
   return (
-    <div>
+    <div className=' w-full h-[500px] flex justify-center items-center'>
       <div>Dashboard Page</div>
-      <div>
-        <Link href="/courses">
-          <Button>Courses</Button>
-        </Link>
-      </div>
     </div>
   )
 }
