@@ -58,13 +58,13 @@ export const ChapterVideoForm = ({
           {isEditing && (
             <>Cancel</>
           )}
-          {!isEditing && !initialData.videoUrl && (
+          {!isEditing && !initialData?.videoUrl && (
             <>
               <PlusCircle className="h-4 w-4 mr-2" />
               Add a video
             </>
           )}
-          {!isEditing && initialData.videoUrl && (
+          {!isEditing && initialData?.videoUrl && (
             <>
               <Pencil className="h-4 w-4 mr-2" />
               Edit video
@@ -73,7 +73,7 @@ export const ChapterVideoForm = ({
         </Button>
       </div>
       {!isEditing && (
-        !initialData.videoUrl ? (
+        !initialData?.videoUrl ? (
           <div className="flex items-center justify-center h-60 bg-slate-200 rounded-md">
             <Video className="h-10 w-10 text-slate-500" />
           </div>
@@ -100,7 +100,7 @@ export const ChapterVideoForm = ({
           </div>
         </div>
       )}
-      {initialData.videoUrl && !isEditing && (
+      {initialData?.videoUrl && !isEditing && (
         <div className="text-xs text-muted-foreground mt-2">
           Videos can take a few minutes to process. Refresh the page if video does not appear.
         </div>

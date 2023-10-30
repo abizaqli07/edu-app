@@ -63,3 +63,15 @@ export const joinClass = z.object({
   courseId: z.string().uuid(),
   userId: z.string()
 })
+
+export const getAllClassSchema = z.object({
+  userId: z.string().nullish()
+})
+
+export const getClassSchema = z.object({
+  courseId: z.string()
+})
+
+export const getChapterSchema = z.object({
+  chapterId: z.string()
+})

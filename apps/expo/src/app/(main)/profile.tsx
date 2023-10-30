@@ -17,7 +17,6 @@ const Profile = () => {
 
   const onSaveUser = async () => {
     try {
-      // This is not working!
       const result = await user?.update({
         firstName: firstName,
         lastName: lastName,
@@ -63,7 +62,7 @@ const Profile = () => {
       <View className=" p-12">
         <TextInput placeholder="First Name" value={firstName} onChangeText={setFirstName} style={styles.inputField} />
         <TextInput placeholder="Last Name" value={lastName} onChangeText={setLastName} style={styles.inputField} />
-        <Button onPress={onSaveUser} title="Update account" color={'#6c47ff'}></Button>
+        <Button onPress={onSaveUser} title="Update Profile" color={'#6c47ff'}></Button>
       </View>
     </View>
   )

@@ -19,6 +19,7 @@ const ChapterIdPage = ({
   params: { courseId: string; chapterId: string }
 }) => {
 
+  console.log(params.chapterId)
   const { data: chapter, isLoading } = api.admin.chapter.getOne.useQuery({
     id: params.chapterId,
     courseId: params.courseId

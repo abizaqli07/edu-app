@@ -1,3 +1,4 @@
+import { useUser } from '@clerk/clerk-expo'
 import React from 'react'
 import {
   View,
@@ -8,10 +9,13 @@ import { COLORS } from '~/constants/theme'
 import { api } from '~/utils/api'
 
 const Home = () => {
-  const { data: categories, isLoading, isError } = api.category.getAll.useQuery()
-  const { data: courses, isLoading: isCourseLoading, isError: isCourseError } = api.student.course.getAll.useQuery()
+  const { user } = useUser()
 
-  if (isLoading || isCourseLoading) {
+  const { data: courses, isLoading: isCourseLoading, isError: isCourseError } = api.student.classroom.getAll.useQuery({
+    userId: user?.id
+  })
+
+  if (isCourseLoading) {
     return (
       <View>
         <Text>Loading...</Text>
@@ -19,7 +23,7 @@ const Home = () => {
     )
   }
 
-  if (categories === undefined || isError || isCourseError) {
+  if (isCourseError) {
     return (
       <View>
         <Text>Something went wrong</Text>
@@ -28,8 +32,8 @@ const Home = () => {
   }
 
   return (
-    <View className='flex-1' style={{ backgroundColor: COLORS.primaryBlackHex }}>
-      <HomeView categories={categories} courses={courses} />
+    <View className='flex-1 p-8' style={{ backgroundColor: COLORS.primaryWhiteHex }}>
+      <HomeView courses={courses} />
     </View>
   )
 }

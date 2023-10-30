@@ -118,7 +118,7 @@ const InitialLayout = () => {
                   style={{
                     height: 33,
                     width: 33,
-                    color: focused ? COLORS.white : COLORS.black
+                    color: focused ? COLORS.white : COLORS.white
                   }}
                 />
               </View>

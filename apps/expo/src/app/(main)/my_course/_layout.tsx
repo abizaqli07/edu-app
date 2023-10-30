@@ -1,10 +1,10 @@
 import { Stack } from 'expo-router'
 import React from 'react'
 
-const CourseLayout = () => {
+const MyCourseLayout = () => {
   return (
     <Stack />
   )
 }
 
-export default CourseLayout
+export default MyCourseLayout

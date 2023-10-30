@@ -199,7 +199,7 @@ export const chapterRouter = createTRPCRouter({
     .input(idChapter)
     .query(async ({ ctx, input }) => {
       const chapter = await ctx.db.query.chapter.findFirst({
-        where: ((chapter, { eq }) => eq(chapter.id, input.id) && eq(chapter.courseId, input.courseId)),
+        where: ((chapter, { eq }) => eq(chapter.id, input.id)),
         with: {
           muxData: true
         }

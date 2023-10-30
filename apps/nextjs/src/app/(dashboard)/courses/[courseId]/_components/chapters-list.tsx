@@ -1,4 +1,5 @@
 
+import type { RouterOutputs } from "@acme/api";
 import type {
   DropResult
 } from "@hello-pangea/dnd";
@@ -14,17 +15,7 @@ import { Badge } from "~/components/ui/badge";
 import { cn } from "~/lib/utils";
 
 interface ChaptersListProps {
-  items: {
-    id: string;
-    description: string | null;
-    title: string;
-    createdAt: Date;
-    updatedAt: Date;
-    isPublished: boolean;
-    videoUrl: string | null;
-    position: number;
-    courseId: string;
-  }[];
+  items: RouterOutputs["admin"]["course"]["getOne"]["chapters"];
   onReorder: (updateData: { id: string; position: number }[]) => void;
   onEdit: (id: string) => void;
 };

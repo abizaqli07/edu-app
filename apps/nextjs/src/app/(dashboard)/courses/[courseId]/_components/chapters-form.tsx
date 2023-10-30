@@ -49,7 +49,7 @@ export const ChaptersForm = ({
     async onSuccess() {
       toast.success("Chapter created")
       toggleCreating();
-      await context.admin.chapter.invalidate()
+      await context.admin.course.getOne.invalidate()
     },
     onError(error) {
       toast.error(error.message)
@@ -59,7 +59,7 @@ export const ChaptersForm = ({
   const reorder = api.admin.chapter.reorder.useMutation({
     async onSuccess() {
       toast.success("Chapter Reordered")
-      await context.admin.chapter.invalidate()
+      await context.admin.course.getOne.invalidate()
       setIsUpdating(false);
     },
     onError(error) {

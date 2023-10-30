@@ -1,7 +1,7 @@
+import { useUser } from '@clerk/clerk-expo';
 import React from 'react';
 import { Text, View } from 'react-native';
-import { COLORS, FONTSIZE } from '../constants/theme';
-import GradientBGIcon from './gradient_bg_icon';
+import { COLORS } from '../constants/theme';
 import ProfilePic from './profile_pic';
 
 interface HeaderBarProps {
@@ -9,15 +9,15 @@ interface HeaderBarProps {
 }
 
 const HeaderBar: React.FC<HeaderBarProps> = ({ title }) => {
+  const { user } = useUser()
   return (
     <View
-      className='p-8 flex-row items-center justify-between'
+      className='p-1 flex-row items-center justify-between'
     >
-      <GradientBGIcon
-        name="menu"
-        color={COLORS.primaryLightGreyHex}
-        size={FONTSIZE.size_16}
-      />
+      <View>
+        <Text className=' text-base'>Hello,</Text>
+        <Text className=' text-lg font-bold'>{user?.username ? user.username : user?.emailAddresses[0]?.emailAddress}</Text>
+      </View>
       <Text
         className='font-semibold text-xl'
         style={{ color: COLORS.primaryWhiteHex }}
